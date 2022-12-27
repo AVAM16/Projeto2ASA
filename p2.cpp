@@ -1,31 +1,104 @@
-#include <vector>
+#include <bits/stdc++.h>
 #include <iostream>
+#include <vector>
+
 
 using namespace std;
 
-unsigned int V, E;
 
-void addEdge(vector <pair<int, int> > adj[], int u, int v, int wt)
-{
-  adj[u].push_back(make_pair(v, wt));
-  adj[v].push_back(make_pair(u, wt));
-}
+class DSU {
+	int* parent;
+	int* rank;
 
-void readVE(){
-  cin >> V >> E;
-}
+public:
+	DSU(int n)
+	{
+		parent = new int[n];
+		rank = new int[n];
 
-void readGraph(vector <pair<int, int> > adj[]){
-  for (int a = 0; a < E; a++){
-    int u, v, wt;
-    cin >> u >> v >> wt;
-    addEdge(adj, u, v, wt);
+		for (int i = 0; i < n; i++) {
+			parent[i] = -1;
+			rank[i] = 1;
+		}
+	}
+
+	int find(int i)
+	{
+		if (parent[i] == -1)
+			return i;
+
+		return parent[i] = find(parent[i]);
+	}
+
+	void unite(int x, int y)
+	{
+		int s1 = find(x);
+		int s2 = find(y);
+
+		if (s1 != s2) {
+			if (rank[s1] < rank[s2]) { //mudanca aqui
+				parent[s1] = s2;
+			}
+			else if (rank[s1] > rank[s2]) { //mudanca aqui
+				parent[s2] = s1;
+			}
+			else {
+				parent[s2] = s1;
+				rank[s1] += 1;
+			}
+		}
+	}
+};
+
+class Graph {
+	vector<vector<int> > edgelist;
+	int V;
+
+public:
+	Graph(int V) { this->V = V; }
+
+	void addEdge(int x, int y, int w)
+	{
+		edgelist.push_back({ w, x, y });
+	}
+
+	void kruskals_mst()
+	{
+		sort(edgelist.begin(), edgelist.end(), greater<vector<int>>());
+
+		DSU s(V);
+		int ans = 0;
+		for (auto edge : edgelist) {
+			int w = edge[0];
+			int x = edge[1];
+			int y = edge[2];
+			if (s.find(x) != s.find(y)) {
+				s.unite(x, y);
+				ans += w;
+			}
+		}
+
+		cout << ans << endl;;
+	}
+};
+
+
+ Graph fillGraph(int e, Graph g){
+  for (int a = 0; a < e; a++) {
+    int u, v, w;
+    cin >> u >> v >> w;
+    g.addEdge(u, v, w);
   }
+  return g;
 }
 
-int main(){
-  readVE();
-  vector <pair<int, int> > adj[V];
-  readGraph(adj);
-  return 0;
+int main()
+{
+  int V;
+  int E;
+  cin >> V >> E;
+	Graph g(V);
+  Graph Gfinal = fillGraph(E, g);
+	Gfinal.kruskals_mst();
+	return 0;
 }
