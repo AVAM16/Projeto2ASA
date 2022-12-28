@@ -1,48 +1,54 @@
 #include <bits/stdc++.h>
 #include <iostream>
 #include <vector>
-
+#include <array>
 
 using namespace std;
 
-
-class DSU {
-	int* parent;
-	int* rank;
+class MakeSet
+{
+	int *parent;
+	int *rank;
 
 public:
-	DSU(int n)
+	MakeSet(int n)
 	{
 		parent = new int[n];
 		rank = new int[n];
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++)
+		{
 			parent[i] = -1;
 			rank[i] = 1;
 		}
 	}
 
-	int find(int i)
+	int FindSet(int i)
 	{
 		if (parent[i] == -1)
+		{
 			return i;
-
-		return parent[i] = find(parent[i]);
+		}
+		return parent[i] = FindSet(parent[i]);
 	}
 
-	void unite(int x, int y)
+	void Union(int u, int v)
 	{
-		int s1 = find(x);
-		int s2 = find(y);
+		int s1 = FindSet(u);
+		int s2 = FindSet(v);
 
-		if (s1 != s2) {
-			if (rank[s1] < rank[s2]) { //mudanca aqui
+		if (s1 != s2)
+		{
+			if (rank[s1] < rank[s2])
+			{
 				parent[s1] = s2;
 			}
-			else if (rank[s1] > rank[s2]) { //mudanca aqui
+			else if (rank[s1] > rank[s2])
+			{
 				parent[s2] = s1;
 			}
-			else {
+			else
+			{
 				parent[s2] = s1;
 				rank[s1] += 1;
 			}
@@ -50,55 +56,63 @@ public:
 	}
 };
 
-class Graph {
-	vector<vector<int> > edgelist;
+class Graph
+{
+	vector<array<int, 3>> edgelist;
 	int V;
 
 public:
-	Graph(int V) { this->V = V; }
-
-	void addEdge(int x, int y, int w)
+	Graph(int V)
 	{
-		edgelist.push_back({ w, x, y });
+		this->V = V;
 	}
 
-	void kruskals_mst()
+	void addEdge(int u, int v, int w)
 	{
-		sort(edgelist.begin(), edgelist.end(), greater<vector<int>>());
+		edgelist.push_back({u, v, w});
+	}
 
-		DSU s(V);
+	int MSTKruskal()
+	{
+		sort(edgelist.begin(), edgelist.end(), [](const array<int, 3> &w1, const array<int, 3> &w2)
+				 { return w1[2] > w2[2]; });
+		MakeSet s(V);
 		int ans = 0;
-		for (auto edge : edgelist) {
-			int w = edge[0];
-			int x = edge[1];
-			int y = edge[2];
-			if (s.find(x) != s.find(y)) {
-				s.unite(x, y);
+		for (array<int, 3> edge : edgelist)
+		{
+			int u = edge[0];
+			int v = edge[1];
+			int w = edge[2];
+			if (s.FindSet(u) != s.FindSet(v))
+			{
+				s.Union(u, v);
 				ans += w;
 			}
 		}
 
-		cout << ans << endl;;
+		return ans;
 	}
 };
 
-
- Graph fillGraph(int e, Graph g){
-  for (int a = 0; a < e; a++) {
-    int u, v, w;
-    cin >> u >> v >> w;
-    g.addEdge(u, v, w);
-  }
-  return g;
+Graph fillGraph(int v, int e)
+{
+	Graph g(v);
+	for (int a = 0; a < e; a++)
+	{
+		int u, v, w;
+		cin >> u >> v >> w;
+		g.addEdge(u, v, w);
+	}
+	return g;
 }
 
 int main()
 {
-  int V;
-  int E;
-  cin >> V >> E;
-	Graph g(V);
-  Graph Gfinal = fillGraph(E, g);
-	Gfinal.kruskals_mst();
+	int V;
+	int E;
+	cin >> V >> E;
+	Graph G = fillGraph(V, E);
+	int ans = G.MSTKruskal();
+	cout << ans << endl;
 	return 0;
 }
