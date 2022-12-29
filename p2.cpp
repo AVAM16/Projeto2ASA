@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <cstdio>
 
 using namespace std;
 
@@ -100,7 +101,7 @@ Graph fillGraph(int v, int e)
 	for (int a = 0; a < e; a++)
 	{
 		int u, v, w;
-		cin >> u >> v >> w;
+		scanf("%d%d%d", &u,&v,&w);
 		g.addEdge(u, v, w);
 	}
 	return g;
@@ -110,7 +111,8 @@ int main()
 {
 	int V;
 	int E;
-	cin >> V >> E;
+	scanf("%d", &V);
+	scanf("%d", &E);
 	Graph G = fillGraph(V, E);
 	int ans = G.MSTKruskal();
 	cout << ans << endl;
