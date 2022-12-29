@@ -70,13 +70,13 @@ public:
 
 	void addEdge(int u, int v, int w)
 	{
-		edgelist.push_back({u, v, w});
+		edgelist.push_back({u, v, -w});
 	}
 
 	int MSTKruskal()
 	{
 		sort(edgelist.begin(), edgelist.end(), [](const array<int, 3> &w1, const array<int, 3> &w2)
-				 { return w1[2] > w2[2]; });
+				 { return w1[2] < w2[2]; });
 		MakeSet s(V);
 		int ans = 0;
 		for (array<int, 3> edge : edgelist)
@@ -115,6 +115,6 @@ int main()
 	scanf("%d", &E);
 	Graph G = fillGraph(V, E);
 	int ans = G.MSTKruskal();
-	cout << ans << endl;
+	cout << abs(ans) << endl;
 	return 0;
 }
