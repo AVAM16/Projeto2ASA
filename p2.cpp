@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include<algorithm>
 #include <iostream>
 #include <vector>
 #include <array>
