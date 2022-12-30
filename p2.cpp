@@ -77,7 +77,7 @@ public:
 	{
 		sort(edgelist.begin(), edgelist.end(), [](const array<int, 3> &w1, const array<int, 3> &w2)
 				 { return w1[2] < w2[2]; });
-		MakeSet s(V);
+		MakeSet s(V+1);
 		int ans = 0;
 		for (array<int, 3> edge : edgelist)
 		{
