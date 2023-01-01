@@ -8,52 +8,57 @@ using namespace std;
 
 class MakeSet
 {
-	int *predecessor;
+	int *p;
 	int *rank;
 
 public:
 	MakeSet(int n)
 	{
-		predecessor = new int[n];
-		rank = new int[n];
+		p = (int*) malloc(n * sizeof(int));
+		rank = (int*) malloc(n * sizeof(int));
 
-		for (int i = 0; i < n; i++)
+		for (int i = 1; i < n; i++)
 		{
-			predecessor[i] = -1;
+			p[i] = -1;
 			rank[i] = 1;
 		}
 	}
 
 	int FindSet(int i)
 	{
-		if (predecessor[i] == -1)
+		if (p[i] == -1)
 		{
 			return i;
 		}
-		return predecessor[i] = FindSet(predecessor[i]);
+		return p[i] = FindSet(p[i]);
 	}
 
 	void Union(int u, int v)
 	{
-		int s1 = FindSet(u);
-		int s2 = FindSet(v);
+		int set1 = FindSet(u);
+		int set2 = FindSet(v);
 
-		if (s1 != s2)
+		if (set1 != set2)
 		{
-			if (rank[s1] < rank[s2])
+			if (rank[set1] < rank[set2])
 			{
-				predecessor[s1] = s2;
+				p[set1] = set2;
 			}
-			else if (rank[s1] > rank[s2])
+			else if (rank[set1] > rank[set2])
 			{
-				predecessor[s2] = s1;
+				p[set2] = set1;
 			}
 			else
 			{
-				predecessor[s2] = s1;
-				rank[s1] += 1;
+				p[set2] = set1;
+				rank[set1] += 1;
 			}
 		}
+	}
+	~MakeSet()
+	{
+		free(p);
+		free(rank);
 	}
 };
 
@@ -90,16 +95,16 @@ public:
 	{
 		sort(edges.begin(), edges.end(), [](const array<int, 3> &w1, const array<int, 3> &w2)
 				 { return w1[2] < w2[2]; });
-		MakeSet s(V + 1);
+		MakeSet set(V + 1);
 		int ans = 0;
 		for (array<int, 3> edge : edges)
 		{
 			int u = edge[0];
 			int v = edge[1];
 			int w = edge[2];
-			if (s.FindSet(u) != s.FindSet(v))
+			if (set.FindSet(u) != set.FindSet(v))
 			{
-				s.Union(u, v);
+				set.Union(u, v);
 				ans += w;
 			}
 		}
