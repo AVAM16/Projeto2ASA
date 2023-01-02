@@ -19,42 +19,37 @@ public:
 
 		for (int i = 1; i < n; i++)
 		{
-			p[i] = -1;
-			rank[i] = 1;
+			p[i] = i;
+			rank[i] = 0;
 		}
 	}
 
-	int FindSet(int i)
+	int FindSet(int u)
 	{
-		if (p[i] == -1)
+		if (p[u] != u)
 		{
-			return i;
+			p[u] = FindSet(p[u]);
 		}
-		return p[i] = FindSet(p[i]);
+		return p[u];
+	}
+
+	void Link(int u, int v)
+	{
+		if (rank[u] > rank[v]) {
+			p[v] = u;
+		} else{
+			p[u] = v;
+			if (rank[u] == rank[v]) {
+				rank[v] = rank[v] + 1;
+			}
+		}
 	}
 
 	void Union(int u, int v)
 	{
-		int set1 = FindSet(u);
-		int set2 = FindSet(v);
-
-		if (set1 != set2)
-		{
-			if (rank[set1] < rank[set2])
-			{
-				p[set1] = set2;
-			}
-			else if (rank[set1] > rank[set2])
-			{
-				p[set2] = set1;
-			}
-			else
-			{
-				p[set2] = set1;
-				rank[set1] += 1;
-			}
-		}
+		Link(FindSet(u), FindSet(v));
 	}
+
 	~MakeSet()
 	{
 		free(p);
